@@ -8,7 +8,8 @@ public class AgentState : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        AgentBrain.TryGetAgent(animator.GetInteger(AgentEntity.ID_STRING), out _agent);
+        if(_agent == default)
+            AgentBrain.TryGetAgent(animator.GetInteger(AgentEntity.ID_STRING), out _agent);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

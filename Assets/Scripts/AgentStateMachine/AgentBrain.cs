@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public static class AgentBrain
+public class AgentBrain : MonoBehaviour
 {
-    private static Dictionary<int, AgentEntity> Agents { get; set; }
-    private static Populator PopulatorInstance { get; set; }
-    private static int _killedAgents;
-    private static int _movementPriority;
+    private static AgentBrain _instance;
+    private int _killedAgents;
+    private int _movementPriority;
+    private Dictionary<int, AgentEntity> Agents { get; set; }
+    private Populator PopulatorInstance { get; set; }
 
-    static AgentBrain()
+    private void Awake()
     {
         Agents = new Dictionary<int, AgentEntity>(100);
         PopulatorInstance = GameObject.FindObjectOfType<Populator>();
@@ -19,27 +20,35 @@ public static class AgentBrain
         ExplosionManager.OnExplosionWearOff += ExplosionWoreOff;
 
         _movementPriority = PopulatorInstance.SpawnAmount;
+
+        _instance = this;
     }
 
-    public static int RegisterNewAgent(AgentEntity agent)
+    private void Start()
+    {
+        PopulatorInstance.StartPopulating(this);
+    }
+
+    public int RegisterNewAgent(AgentEntity agent)
     {
         int id;
         id = GenerateID();
         Agents.Add(id, agent);
         agent.Initialize(id, PopulatorInstance.SpawnAmount);
+        agent.OnKill += RemoveAgent;
         return id;
     }
-    public static void RemoveAgent(int id)
+    public void RemoveAgent(int id)
     {
         if (Agents.ContainsKey(id))
             Agents.Remove(id);
     }
     public static bool TryGetAgent(int id, out AgentEntity entity)
     {
-        return Agents.TryGetValue(id, out entity);
+        return _instance.Agents.TryGetValue(id, out entity);
     }
 
-    private static int GenerateID()
+    private int GenerateID()
     {
         int rnd;
         do
@@ -49,26 +58,33 @@ public static class AgentBrain
         return rnd;
     }
 
-    private static void ExplosionOccurrence(int amountKilled)
+    private void ExplosionOccurrence(int amountKilled)
     {
         _killedAgents += amountKilled;
         Debug.Log(amountKilled + " Killed");
         NavMesh.SetAreaCost(AgentEntity.OFFROAD_AREA_MASK, 0.8f);
     }
-    private static void ExplosionWoreOff()
+    private void ExplosionWoreOff()
     {
-        NavMesh.SetAreaCost(AgentEntity.OFFROAD_AREA_MASK, 2f);        
+        NavMesh.SetAreaCost(AgentEntity.OFFROAD_AREA_MASK, 2f);
     }
 
     // Give priority
-    public static int AgentMoving()
+    public static int AgentInMotion()
     {
-        _movementPriority--;
-        return _movementPriority;
+        _instance._movementPriority--;
+        return _instance._movementPriority;
     }
-    public static void AgentStoppedMoving()
+    public static void AgentReachedDestination()
     {
-        _movementPriority++;
+        _instance._movementPriority++;
     }
+
+    public States WhatToDo(AgentEntity agent)
+    {
+        return default;
+    }
+
+    public static System.Action OnTick;
 
 }

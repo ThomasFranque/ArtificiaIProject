@@ -18,6 +18,7 @@ public class AgentEntity : MonoBehaviour
 
     [field: SerializeField]
     public int ID { get; private set; }
+    public AgentStats Stats { get; private set; }
     public NavMeshAgent NavMeshAgent { get; private set; }
 
     public void Initialize(int id, int othersAmount)
@@ -30,13 +31,9 @@ public class AgentEntity : MonoBehaviour
 
         SetAvoidancePriority(othersAmount);
         _stateMachineAnim.SetInteger(ID_STRING, id);
+        StartCoroutine(AAAAA());
     }
-
-    private void MoveTo(Vector3 position)
-    {
-        NavMeshAgent.destination = position;
-    }
-
+    
     public void EnteredArea(Area area)
     {
         _currentArea = area;
@@ -66,7 +63,6 @@ public class AgentEntity : MonoBehaviour
     public void SetAvoidancePriority(int priority)
     {
         NavMeshAgent.avoidancePriority = priority;
-        Debug.Log(priority);
     }
     public void ResetAvoidancePriority()
     {
@@ -75,7 +71,16 @@ public class AgentEntity : MonoBehaviour
 
     private void Kill()
     {
-        AgentBrain.RemoveAgent(ID);
+        OnKill?.Invoke(ID);
         Destroy(gameObject);
+    }
+
+    public System.Action<int> OnKill; // int = ID
+
+    System.Collections.IEnumerator AAAAA()
+    {
+        NavMeshAgent.enabled = false;
+        yield return new WaitForSeconds(0.1f);
+        NavMeshAgent.enabled = true;
     }
 }

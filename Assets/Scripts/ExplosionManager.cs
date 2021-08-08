@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class ExplosionManager : MonoBehaviour
 {
+    [SerializeField] private LayerMask _groundMask;
     [SerializeField] private float _explosionRadius;
     [SerializeField, Range(0f, 1f)] private float _pointBlankRadius;
     [SerializeField, Range(0f, 1f)] private float _middleRadius;
     [SerializeField] private float explosionWearoffTime = 5;
     [SerializeField] private bool _hideGizmos;
     [SerializeField] private GameObject _explosionPrefab;
-    [SerializeField] private Populator _populator;
     [SerializeField] private LayerMask _agentMask;
 
     private static Coroutine _explosionWearoff;
@@ -23,13 +23,18 @@ public class ExplosionManager : MonoBehaviour
             //create a ray cast and set it to the mouses cursor position in game
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit, 500, _groundMask))
             {
                 //draw invisible ray cast/vector
                 Debug.DrawLine(ray.origin, hit.point);
                 SpawnExplosionAt(hit.point);
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.S))
+            Time.timeScale = 4;
+        if (Input.GetKeyUp(KeyCode.S))
+            Time.timeScale = 1;
     }
 
     private void SpawnExplosionAt(Vector3 position)

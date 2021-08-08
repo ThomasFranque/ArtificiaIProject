@@ -454,6 +454,10 @@ PrefabInstance:
       propertyPath: <Type>k__BackingField
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 7606417191737111880, guid: 0fa6beb5bb9fcc64fba9bde827fc7b56, type: 3}
+      propertyPath: m_Size.z
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 8859916868328328788, guid: 0fa6beb5bb9fcc64fba9bde827fc7b56, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -501,6 +505,10 @@ PrefabInstance:
     - target: {fileID: 9192192588223333200, guid: 0fa6beb5bb9fcc64fba9bde827fc7b56, type: 3}
       propertyPath: m_RootOrder
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 9192192588223333200, guid: 0fa6beb5bb9fcc64fba9bde827fc7b56, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 9192192588223333202, guid: 0fa6beb5bb9fcc64fba9bde827fc7b56, type: 3}
       propertyPath: m_Materials.Array.data[0]

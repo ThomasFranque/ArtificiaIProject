@@ -7,12 +7,15 @@ public class Explosion : MonoBehaviour
     [SerializeField] private GameObject _pointBlank;
     [SerializeField] private GameObject _middle;
     [SerializeField] private GameObject _outskirts;
+    [SerializeField] private GameObject _explosionFire;
 
     public void Initialize(float pointBlank, float middle, float outskirts)
     {
         _pointBlank.transform.localScale = Vector3.one * (pointBlank * 2);
         _middle.transform.localScale = new Vector3(1, 0.25f, 1) * (middle * 2);
         _outskirts.transform.localScale = new Vector3(1, 0.05f, 1) * (outskirts * 2);
+
+        _explosionFire.transform.SetParent(default);
 
         StartCoroutine(CQueueDeath());
     }

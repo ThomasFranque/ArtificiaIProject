@@ -92,7 +92,7 @@ public class Area : MonoBehaviour
 
     protected bool ValidatePosition(Vector3 pos)
     {
-        return !Physics.CheckSphere(pos, 0.5f, _obstructionLayers);
+        return !Physics.CheckSphere(pos, 0.7f, _obstructionLayers);
     }
 
     private bool IsAgent(Collider other) => other.tag == AgentEntity.TAG;

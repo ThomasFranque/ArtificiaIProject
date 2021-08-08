@@ -3,8 +3,13 @@ using UnityEngine;
 
 public class Area : MonoBehaviour
 {
-    [field: SerializeField] 
+    [field: SerializeField]
     public AreaType Type { get; private set; }
+
+    [SerializeField]
+    private Transform _ground;
+    [SerializeField]
+    private LayerMask _obstructionLayers;
     public Dictionary<Collider, AgentEntity> AgentsInArea { get; private set; }
 
     private void Awake()
@@ -12,9 +17,26 @@ public class Area : MonoBehaviour
         AgentsInArea = new Dictionary<Collider, AgentEntity>(25);
     }
 
-    public void Interact(AgentEntity agent)
+    public virtual States Interact(AgentEntity agent)
     {
+        //agent.SetDesiredPosition(GetPositionInArea());
         Debug.Log("agent " + agent.ID + " Interacted with " + name);
+        return GetInteractionState();
+    }
+
+    private States GetInteractionState()
+    {
+        switch (Type)
+        {
+            case AreaType.concert:
+                return States.watch_concert_positive;
+            case AreaType.food:
+                return States.eat;
+            case AreaType.open_space:
+                return States.sit;
+        }
+
+        return default;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -43,6 +65,42 @@ public class Area : MonoBehaviour
         agent.LeftArea(this);
     }
 
+    public virtual Vector3 GetPositionInArea()
+    {
+        float x;
+        float z;
+        Vector3 pos;
+
+        int maxIterations = 30;
+        int i = 0;
+
+        do
+        {
+
+            x = Random.Range(-_ground.localScale.x / 2, _ground.localScale.x / 2);
+            z = Random.Range(-_ground.localScale.z / 2, _ground.localScale.z / 2);
+
+            x += _ground.transform.position.x;
+            z += _ground.transform.position.z;
+            pos = new Vector3(x, 0, z);
+            i++;
+            if (i == maxIterations)
+                pos = EntireField.GetRandomAreaOfType(Type, this).GetPositionInArea();
+        } while (!ValidatePosition(pos));
+        return pos;
+    }
+
+    protected bool ValidatePosition(Vector3 pos)
+    {
+        return !Physics.CheckSphere(pos, 0.5f, _obstructionLayers);
+    }
+
     private bool IsAgent(Collider other) => other.tag != AgentEntity.TAG;
     private AgentEntity GetAgentComponent(Collider other) => other.GetComponent<AgentEntity>();
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.black;
+        Gizmos.DrawWireCube(_ground.transform.position, _ground.localScale);
+    }
 }

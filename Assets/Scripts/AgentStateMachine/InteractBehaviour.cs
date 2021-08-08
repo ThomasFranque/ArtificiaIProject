@@ -7,8 +7,10 @@ public class InteractBehaviour : AgentState
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       base.OnStateEnter(animator, stateInfo, layerIndex);
-       animator.SetTrigger("interacted");
+        base.OnStateEnter(animator, stateInfo, layerIndex);
+        _agent.InteractWithArea();
+
+        animator.SetTrigger("interacted");
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

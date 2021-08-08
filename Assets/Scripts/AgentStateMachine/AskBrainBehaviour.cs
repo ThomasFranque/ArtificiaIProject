@@ -8,6 +8,7 @@ public class AskBrainBehaviour : AgentState
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
+        _agent.AskBrain();
         animator.SetTrigger("brain_answered");
     }
 

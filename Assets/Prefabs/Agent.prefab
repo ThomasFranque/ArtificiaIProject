@@ -94,7 +94,6 @@ GameObject:
   - component: {fileID: 7608389289152319438}
   - component: {fileID: 8318153470321959235}
   - component: {fileID: 4966998190283042585}
-  - component: {fileID: 2625407347585598536}
   m_Layer: 6
   m_Name: Agent
   m_TagString: Player
@@ -156,7 +155,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 7416841605516894070}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.75
+  m_Radius: 0.95
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -182,22 +181,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <ID>k__BackingField: 0
---- !u!95 &2625407347585598536
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7416841605516894070}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 3dd74af99342d1648a24caf038444406, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  <StateMachineController>k__BackingField: {fileID: 9100000, guid: 3dd74af99342d1648a24caf038444406, type: 2}
+  <State>k__BackingField: 0
+  <Stats>k__BackingField:
+    <Hunger>k__BackingField: 0
+    <Tiredness>k__BackingField: 0
+    <Boredom>k__BackingField: 0
+    _hungerMultiplier: 0
+    _tirednessMultiplier: 0
+    _boredomMultiplier: 0

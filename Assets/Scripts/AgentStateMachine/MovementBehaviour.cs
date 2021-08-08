@@ -13,15 +13,15 @@ namespace AgentStateMachine
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             base.OnStateEnter(animator, stateInfo, layerIndex);
-            _targetPos = EntireField.GetRandomPosition();
+            _targetPos = _agent.DesiredPosition;
             _agent?.NavMeshAgent.SetDestination(_targetPos);
-            _agent.SetAvoidancePriority(AgentBrain.AgentInMotion());
+            //_agent.SetAvoidancePriority(AgentBrain.AgentInMotion());
         }
 
         // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
         override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            if (Vector3.Distance(animator.transform.position, _targetPos) <= 1f)
+            if (Vector3.Distance(animator.transform.position, _targetPos) <= 1.25f)
             {
                 animator.SetTrigger("arrived");
             }
@@ -30,7 +30,7 @@ namespace AgentStateMachine
         // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
         override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            _agent.ResetAvoidancePriority();
+            //_agent.ResetAvoidancePriority();
             AgentBrain.AgentReachedDestination();
         }
 

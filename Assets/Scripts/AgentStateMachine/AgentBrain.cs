@@ -11,6 +11,9 @@ public class AgentBrain : MonoBehaviour
     private Dictionary<int, AgentEntity> Agents { get; set; }
     private Populator PopulatorInstance { get; set; }
 
+    [SerializeField] private float _tickInterval = 5;
+    [SerializeField] private float _tickCountdown;
+
     private void Awake()
     {
         Agents = new Dictionary<int, AgentEntity>(100);
@@ -20,13 +23,21 @@ public class AgentBrain : MonoBehaviour
         ExplosionManager.OnExplosionWearOff += ExplosionWoreOff;
 
         _movementPriority = PopulatorInstance.SpawnAmount;
-
+        _tickCountdown = _tickInterval;
+        OnTick += () => _tickCountdown = _tickInterval;
         _instance = this;
     }
 
     private void Start()
     {
         PopulatorInstance.StartPopulating(this);
+    }
+
+    private void Update()
+    {
+        _tickCountdown -= Time.deltaTime;
+        if (_tickCountdown <= 0)
+            OnTick.Invoke();
     }
 
     public int RegisterNewAgent(AgentEntity agent)
@@ -80,9 +91,45 @@ public class AgentBrain : MonoBehaviour
         _instance._movementPriority++;
     }
 
-    public States WhatToDo(AgentEntity agent)
+    public static States WhatToDo(AgentEntity agent)
     {
-        return default;
+        // Agent prioritizes resting, then food
+        // If both resting and food are above 0.9, goes eat
+        // eating restores rest and food
+
+        // While watching concert, boredom will drop to zero and then to 0.5
+        // when watching concert and boredom is above 0.5, move to other concert
+        States s = agent.State;
+        AgentStats sts = agent.Stats;
+
+        switch (agent.State)
+        {
+            case States.move_to_concert:
+            case States.move_to_food:
+            case States.move_to_open_space:
+                break;
+            case States.watch_concert_positive:
+            case States.watch_concert_negative:
+            case States.eat:
+            case States.sit:
+            case States.none:
+            default:
+                if (sts.Hunger > 0.8 && sts.Tiredness > 0.8 && s != States.eat)
+                    s = States.move_to_food;
+                else if (sts.Tiredness > 0.9f && s != States.sit)
+                    s = States.move_to_open_space;
+                else if (sts.Hunger > 0.9f && s != States.eat)
+                    s = States.move_to_food;
+                else if (sts.Boredom > 0.5f && s != States.watch_concert_positive)
+                    s = States.move_to_concert;
+                else if (sts.Boredom <= 0.001f && s != States.watch_concert_negative)
+                    s = States.watch_concert_negative;
+                break;
+            case States.panicking:
+            case States.explosion_victim:
+                break;
+        }
+        return s;
     }
 
     public static System.Action OnTick;

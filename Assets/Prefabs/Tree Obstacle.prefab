@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5046571020107055287}
   - component: {fileID: 2933652845954242279}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Tree Obstacle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,7 +63,7 @@ GameObject:
   - component: {fileID: 6427216770350565242}
   - component: {fileID: 1910859357211864984}
   - component: {fileID: 6415252803476419375}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -159,7 +159,7 @@ GameObject:
   - component: {fileID: 6606934854528195017}
   - component: {fileID: 2370265800458628122}
   - component: {fileID: 3369103499606987845}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -254,7 +254,7 @@ GameObject:
   - component: {fileID: 7743997924134058255}
   - component: {fileID: 7450231452278315963}
   - component: {fileID: 5719483835447298262}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -349,7 +349,7 @@ GameObject:
   - component: {fileID: 7123841184489539861}
   - component: {fileID: 513286451222037494}
   - component: {fileID: 6242946279819493117}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

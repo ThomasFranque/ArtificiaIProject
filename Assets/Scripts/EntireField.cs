@@ -8,10 +8,13 @@ public class EntireField : MonoBehaviour
     [SerializeField] private Vector2 _fieldArea = new Vector2(99, 99);
     [SerializeField] private bool _drawSpawn = true;
 
+    [Header("Entry Points")]
     [SerializeField] private GameObject _entryPointVisual;
     [SerializeField] private GameObject _exitPointVisual;
     [SerializeField] private Transform[] _entryPoints;
     [SerializeField] private Transform[] _exitPoints;
+
+    private Area[] _areas;
 
     public Vector3 GetClosestExit(Vector3 from)
     {
@@ -27,7 +30,7 @@ public class EntireField : MonoBehaviour
             {
                 closest = d;
                 closestPos = t.position;
-            }            
+            }
         }
 
         return closestPos;
@@ -46,6 +49,32 @@ public class EntireField : MonoBehaviour
             GameObject.Instantiate(_entryPointVisual).transform.position = t.position;
         foreach (Transform t in _exitPoints)
             GameObject.Instantiate(_exitPointVisual).transform.position = t.position;
+
+        _areas = GameObject.FindObjectsOfType<Area>();
+    }
+    private Vector3 InstanceGetRandomPoint()
+    {
+        float x;
+        float z;
+
+        x = Random.Range(-_fieldArea.x / 2, _fieldArea.x / 2);
+        z = Random.Range(-_fieldArea.y / 2, _fieldArea.y / 2);
+
+        return new Vector3(x, 0, z);
+    }
+    public static Vector3 GetRandomPosition() => _instance.InstanceGetRandomPoint();
+    public static Area GetRandomAreaOfType(AreaType type, Area avoid = default)
+    {
+        List<Area> areas = new List<Area>();
+        for (int i = 0; i < _instance._areas.Length; i++)
+        {
+            Area a = _instance._areas[i];
+            if(a.Type != type || a == avoid) continue;
+            
+            areas.Add(a);
+        }
+        
+        return areas[Random.Range(0, areas.Count)];
     }
 
     private void OnDrawGizmos()
@@ -61,15 +90,4 @@ public class EntireField : MonoBehaviour
         foreach (Transform t in _exitPoints)
             Gizmos.DrawCube(t.position, new Vector3(1f, 0.1f, 1f));
     }
-    private Vector3 InstanceGetRandomPoint()
-    {
-        float x;
-        float z;
-
-        x = Random.Range(-_fieldArea.x / 2, _fieldArea.x / 2);
-        z = Random.Range(-_fieldArea.y / 2, _fieldArea.y / 2);
-
-        return new Vector3(x, 0, z);
-    }
-    public static Vector3 GetRandomPosition() => _instance.InstanceGetRandomPoint();
 }

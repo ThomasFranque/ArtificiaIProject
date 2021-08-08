@@ -47,6 +47,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Type>k__BackingField: 0
+  _ground: {fileID: 9192192588223333200}
+  _obstructionLayers:
+    serializedVersion: 2
+    m_Bits: 192
 --- !u!65 &7606417191737111880
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.AI;
+using TMPro;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class AgentEntity : MonoBehaviour
@@ -12,22 +13,20 @@ public class AgentEntity : MonoBehaviour
     public const int OFFROAD_AREA_MASK = 8;
 
     private Animator _stateMachineAnim;
-    private Area _currentArea;
 
     private int _othersAmount;
 
+    [SerializeField] private TextMeshPro _infoTxt;
 
     [field: SerializeField]
     public int ID { get; private set; }
-    [field: SerializeField]
-    public RuntimeAnimatorController StateMachineController { get; private set; }
-    [field: SerializeField]
-    public States State { get; private set; }
-    [field: SerializeField]
-    public AgentStats Stats { get; private set; }
+    [field: SerializeField] public RuntimeAnimatorController StateMachineController { get; private set; }
+    [field: SerializeField] public States State { get; private set; }
+    [field: SerializeField] public AgentStats Stats { get; private set; }
     public Animator StateMachine => _stateMachineAnim;
     public NavMeshAgent NavMeshAgent { get; private set; }
     public Vector3 DesiredPosition { get; private set; }
+    public Area CurrentArea { get; private set; }
 
     public void Initialize(int id, int othersAmount)
     {
@@ -45,13 +44,13 @@ public class AgentEntity : MonoBehaviour
 
     public void EnteredArea(Area area)
     {
-        _currentArea = area;
+        CurrentArea = area;
         OnAreaEntered?.Invoke(area);
     }
 
     public void LeftArea(Area area)
     {
-        _currentArea = default;
+        CurrentArea = default;
         OnAreaLeft?.Invoke(area);
     }
 
@@ -132,13 +131,21 @@ public class AgentEntity : MonoBehaviour
             case States.explosion_victim:
                 break;
         }
+
+        string infoTxt = State.ToString() +
+            "\nBored:" + Stats.Boredom +
+            "\nHunger:" + Stats.Hunger +
+            "\nTired:" + Stats.Tiredness;
+        if (CurrentArea != default)
+            infoTxt += "\nArea:" + CurrentArea.Type;
+        _infoTxt.SetText(infoTxt);
     }
 
     public void InteractWithArea()
     {
         States? s;
-         s = _currentArea?.Interact(this);
-         if (s != null)
+        s = CurrentArea?.Interact(this);
+        if (s != null)
             State = s.Value;
     }
 
@@ -149,7 +156,7 @@ public class AgentEntity : MonoBehaviour
             case States.move_to_concert:
             case States.move_to_food:
             case States.move_to_open_space:
-                Stats.DecreaseTiredness();
+                Stats.IncreaseTiredness();
                 Stats.IncreaseBoredom(0.6f);
                 Stats.IncreaseHunger();
                 break;
@@ -159,14 +166,14 @@ public class AgentEntity : MonoBehaviour
                 Stats.IncreaseHunger();
                 break;
             case States.watch_concert_negative:
-                Stats.IncreaseTiredness(.8f);
+                Stats.IncreaseTiredness(.9f);
                 Stats.IncreaseBoredom(.8f);
                 Stats.IncreaseHunger();
                 break;
             case States.eat:
                 Stats.DecreaseTiredness(.8f);
+                Stats.DecreaseHunger();
                 Stats.IncreaseBoredom();
-                Stats.IncreaseHunger();
                 break;
             case States.sit:
                 Stats.DecreaseTiredness();

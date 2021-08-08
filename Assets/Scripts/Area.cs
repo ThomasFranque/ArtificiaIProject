@@ -95,7 +95,7 @@ public class Area : MonoBehaviour
         return !Physics.CheckSphere(pos, 0.5f, _obstructionLayers);
     }
 
-    private bool IsAgent(Collider other) => other.tag != AgentEntity.TAG;
+    private bool IsAgent(Collider other) => other.tag == AgentEntity.TAG;
     private AgentEntity GetAgentComponent(Collider other) => other.GetComponent<AgentEntity>();
 
     private void OnDrawGizmos()

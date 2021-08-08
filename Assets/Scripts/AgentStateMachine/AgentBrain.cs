@@ -91,6 +91,7 @@ public class AgentBrain : MonoBehaviour
         _instance._movementPriority++;
     }
 
+    // Agent action heuristic
     public static States WhatToDo(AgentEntity agent)
     {
         // Agent prioritizes resting, then food
@@ -105,8 +106,19 @@ public class AgentBrain : MonoBehaviour
         switch (agent.State)
         {
             case States.move_to_concert:
+                if (agent.CurrentArea != default)
+                    if (agent.CurrentArea.Type == AreaType.concert)
+                        s = States.watch_concert_positive;
+                break;
             case States.move_to_food:
+                if (agent.CurrentArea != default)
+                    if (agent.CurrentArea.Type == AreaType.food)
+                        s = States.eat;
+                break;
             case States.move_to_open_space:
+                if (agent.CurrentArea != default)
+                    if (agent.CurrentArea.Type == AreaType.open_space)
+                        s = States.sit;
                 break;
             case States.watch_concert_positive:
             case States.watch_concert_negative:
@@ -114,6 +126,14 @@ public class AgentBrain : MonoBehaviour
             case States.sit:
             case States.none:
             default:
+
+                // Keep resting/eating until certain threshold
+                if ((s == States.eat && sts.Hunger >= 0.1f) || // eat until full
+                (s == States.eat && sts.Tiredness >= 0.35f)|| // rest a bit while eating
+                (s == States.sit && sts.Tiredness >= 0.15f && sts.Hunger <= 0.9))  // rest until rested || move to food
+                    break;
+
+                // Agent wants to do something else?
                 if (sts.Hunger > 0.8 && sts.Tiredness > 0.8 && s != States.eat)
                     s = States.move_to_food;
                 else if (sts.Tiredness > 0.9f && s != States.sit)

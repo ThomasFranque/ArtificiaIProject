@@ -28,8 +28,8 @@ public class AgentStats
 
     public void Initialize()
     {
-        Hunger = Random.value;
-        Tiredness = Random.value;
+        Hunger = Random.value * 0.3f;
+        Tiredness = Random.value * 0.3f;
         Boredom = 1;
 
         _hungerMultiplier = Random.Range(0.5f, 1.5f);
@@ -41,7 +41,7 @@ public class AgentStats
     public void IncreaseTiredness(float mult = 1) => Tiredness = Mathf.Clamp01(Tiredness + TICK_VALUE * _tirednessMultiplier * mult);
     public void IncreaseBoredom(float mult = 1) => Boredom = Mathf.Clamp01(Boredom + TICK_VALUE * _boredomMultiplier * mult);
 
-    public void DecreaseHunger(float mult = 1) => Hunger = Mathf.Clamp01(Hunger + TICK_VALUE * _hungerMultiplier * mult);
-    public void DecreaseTiredness(float mult = 1) => Tiredness = Mathf.Clamp01(Tiredness + TICK_VALUE * _tirednessMultiplier * mult);
-    public void DecreaseBoredom(float mult = 1) => Boredom = Mathf.Clamp01(Boredom + TICK_VALUE * _boredomMultiplier * mult);
+    public void DecreaseHunger(float mult = 1) => Hunger = Mathf.Clamp01(Hunger - TICK_VALUE * _hungerMultiplier * mult);
+    public void DecreaseTiredness(float mult = 1) => Tiredness = Mathf.Clamp01(Tiredness - TICK_VALUE * _tirednessMultiplier * mult);
+    public void DecreaseBoredom(float mult = 1) => Boredom = Mathf.Clamp01(Boredom - TICK_VALUE * _boredomMultiplier * mult);
 }

@@ -46,8 +46,8 @@ public class Populator : MonoBehaviour
             agent.OnKill += (int id) => _agentsPopulated--;
             _agentsPopulated++;
 
-            if (_agentsPopulated == 100)
-                yield return new WaitUntil(() => _agentsPopulated < 100);
+            if (_agentsPopulated == SpawnAmount)
+                yield return new WaitUntil(() => _agentsPopulated < SpawnAmount);
             yield return _waitForDelayBetweenSpawn;
         }
     }

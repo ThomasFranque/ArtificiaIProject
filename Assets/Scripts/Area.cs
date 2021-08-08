@@ -12,7 +12,7 @@ public class Area : MonoBehaviour
     private LayerMask _obstructionLayers;
     public Dictionary<Collider, AgentEntity> AgentsInArea { get; private set; }
 
-    private void Awake()
+    protected virtual void Awake()
     {
         AgentsInArea = new Dictionary<Collider, AgentEntity>(25);
     }
@@ -20,7 +20,6 @@ public class Area : MonoBehaviour
     public virtual States Interact(AgentEntity agent)
     {
         //agent.SetDesiredPosition(GetPositionInArea());
-        Debug.Log("agent " + agent.ID + " Interacted with " + name);
         return GetInteractionState();
     }
 
@@ -65,7 +64,7 @@ public class Area : MonoBehaviour
         agent.LeftArea(this);
     }
 
-    public virtual Vector3 GetPositionInArea()
+    public virtual Vector3 GetPositionInArea(AgentEntity forE)
     {
         float x;
         float z;
@@ -85,7 +84,7 @@ public class Area : MonoBehaviour
             pos = new Vector3(x, 0, z);
             i++;
             if (i == maxIterations)
-                pos = EntireField.GetRandomAreaOfType(Type, this).GetPositionInArea();
+                pos = EntireField.GetRandomAreaOfType(Type, this).GetPositionInArea(forE);
         } while (!ValidatePosition(pos));
         return pos;
     }

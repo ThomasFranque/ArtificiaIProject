@@ -9,6 +9,7 @@ public class FireBehaviour : MonoBehaviour
     [SerializeField] private NavMeshObstacle _navMeshObstacle;
     [SerializeField] private Animator _fireStatemachine;
     [SerializeField] private int _fireAftermathLayer;
+    [SerializeField] private string _agentTag;
     [SerializeField] private LayerMask _fireAndObstacles;
     [SerializeField] private Vector2 _minMaxLifetime;
     [SerializeField] private float aftermathDuration;
@@ -60,5 +61,20 @@ public class FireBehaviour : MonoBehaviour
     private bool IsFreeSpace(Vector3 pos)
     {
         return !Physics.CheckSphere(pos, transform.localScale.x * 0.45f, _fireAndObstacles);
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.collider.tag == _agentTag)
+            KillAgent(other.collider);
+    }
+    private void OnCollisionStay(Collision other)
+    {
+        if (other.collider.tag == _agentTag)
+            KillAgent(other.collider);
+    }
+    private void KillAgent(Collider c)
+    {
+        c.GetComponent<AgentEntity>().Kill();
     }
 }

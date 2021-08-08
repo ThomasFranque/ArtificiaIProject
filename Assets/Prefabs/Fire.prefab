@@ -115,6 +115,7 @@ MonoBehaviour:
   _navMeshObstacle: {fileID: 7645118990973465781}
   _fireStatemachine: {fileID: 5632914217435772522}
   _fireAftermathLayer: 9
+  _agentTag: Player
   _fireAndObstacles:
     serializedVersion: 2
     m_Bits: 896

@@ -13,13 +13,12 @@ public class AgentEntity : MonoBehaviour
     public const int OFFROAD_AREA_MASK = 8;
 
     private Animator _stateMachineAnim;
-
+    private Transform _initialParent;
     private int _othersAmount;
 
     [SerializeField] private TextMeshPro _infoTxt;
 
-    [field: SerializeField]
-    public int ID { get; private set; }
+    [field: SerializeField] public int ID { get; private set; }
     [field: SerializeField] public RuntimeAnimatorController StateMachineController { get; private set; }
     [field: SerializeField] public States State { get; private set; }
     [field: SerializeField] public AgentStats Stats { get; private set; }
@@ -38,6 +37,7 @@ public class AgentEntity : MonoBehaviour
 
         ID = id;
         _othersAmount = othersAmount;
+        _initialParent = transform.parent;
 
         SetAvoidancePriority(othersAmount);
         StartCoroutine(DelayBeforeMachineInitialization());
@@ -104,7 +104,7 @@ public class AgentEntity : MonoBehaviour
 
     public void Kill()
     {
-            OnKill?.Invoke(ID);
+        OnKill?.Invoke(ID);
         Destroy(gameObject);
     }
     public void ExitField()
@@ -115,22 +115,33 @@ public class AgentEntity : MonoBehaviour
 
     public void AskBrain()
     {
+        States prevState = State;
         State = AgentBrain.WhatToDo(this);
         switch (State)
         {
             case States.move_to_concert:
                 DesiredPosition = EntireField
-                .GetRandomAreaOfType(AreaType.concert).GetPositionInArea();
+                .GetRandomAreaOfType(AreaType.concert).GetPositionInArea(this);
                 break;
             case States.move_to_food:
                 DesiredPosition = EntireField
-                .GetRandomAreaOfType(AreaType.food).GetPositionInArea();
+                .GetRandomAreaOfType(AreaType.food).GetPositionInArea(this);
                 break;
             case States.move_to_open_space:
                 DesiredPosition = EntireField
-                .GetRandomAreaOfType(AreaType.open_space).GetPositionInArea();
+                .GetRandomAreaOfType(AreaType.open_space).GetPositionInArea(this);
                 break;
         }
+
+        if (State != prevState)
+        {
+            if (prevState == States.sit)
+            {
+                OnGetUp?.Invoke();
+                OnGetUp = default;
+            }
+        }
+
         NotifyStateMachine();
     }
 
@@ -228,6 +239,7 @@ public class AgentEntity : MonoBehaviour
 
     public System.Action<int> OnKill; // int = ID
     public System.Action OnExitField;
+    public System.Action OnGetUp;
     private event Action<Area> OnAreaEntered;
     private event Action<Area> OnAreaLeft;
 

@@ -32,7 +32,7 @@ public class ExplosionManager : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.S))
-            Time.timeScale = 4;
+            Time.timeScale = 6;
         if (Input.GetKeyUp(KeyCode.S))
             Time.timeScale = 1;
     }

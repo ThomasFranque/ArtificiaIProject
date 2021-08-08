@@ -28,8 +28,8 @@ public class AgentStats
 
     public void Initialize()
     {
-        Hunger = Random.value * 0.3f;
-        Tiredness = Random.value * 0.3f;
+        Hunger = Random.value;
+        Tiredness = Random.value;
         Boredom = 1;
 
         _hungerMultiplier = Random.Range(0.5f, 1.5f);

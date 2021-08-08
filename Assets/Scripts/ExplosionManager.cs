@@ -10,6 +10,7 @@ public class ExplosionManager : MonoBehaviour
     [SerializeField] private float explosionWearoffTime = 5;
     [SerializeField] private bool _hideGizmos;
     [SerializeField] private GameObject _explosionPrefab;
+    [SerializeField] private Populator _populator;
     [SerializeField] private LayerMask _agentMask;
 
     private static Coroutine _explosionWearoff;

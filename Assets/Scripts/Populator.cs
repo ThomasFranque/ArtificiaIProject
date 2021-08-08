@@ -17,6 +17,12 @@ public class Populator : MonoBehaviour
     private AgentBrain _brain;
     private WaitForSeconds _waitForDelayBetweenSpawn;
 
+    private void Awake()
+    {
+        ExplosionManager.OnExplosion += (int kills) => Suppress();
+        ExplosionManager.OnExplosionWearOff += UnSuppress;
+    }
+
     // Start is called before the first frame update
     public void StartPopulating(AgentBrain brain)
     {
@@ -32,22 +38,27 @@ public class Populator : MonoBehaviour
     {
         while (true)
         {
-            Vector3 spawnPos;
-            GameObject spawnedObject;
-            AgentEntity agent;
+            if (!_suppress)
+            {
+                Vector3 spawnPos;
+                GameObject spawnedObject;
+                AgentEntity agent;
 
-            spawnPos = _field.GetRandomEntrance();
-            spawnedObject = GameObject.Instantiate(_agentPrefab, _agentsFather.transform);
-            agent = spawnedObject.GetComponent<AgentEntity>();
+                spawnPos = _field.GetRandomEntrance();
+                spawnedObject = GameObject.Instantiate(_agentPrefab, _agentsFather.transform);
+                agent = spawnedObject.GetComponent<AgentEntity>();
 
 
-            spawnedObject.transform.position = spawnPos;
-            _brain.RegisterNewAgent(agent);
-            agent.OnKill += (int id) => _agentsPopulated--;
-            _agentsPopulated++;
+                spawnedObject.transform.position = spawnPos;
+                _brain.RegisterNewAgent(agent);
+                agent.OnKill += (int id) => _agentsPopulated--;
+                agent.OnExitField += () => _agentsPopulated--;
+                _agentsPopulated++;
 
-            if (_agentsPopulated == SpawnAmount)
-                yield return new WaitUntil(() => _agentsPopulated < SpawnAmount);
+
+                if (_agentsPopulated == SpawnAmount)
+                    yield return new WaitUntil(() => _agentsPopulated < SpawnAmount);
+            }
             yield return _waitForDelayBetweenSpawn;
         }
     }

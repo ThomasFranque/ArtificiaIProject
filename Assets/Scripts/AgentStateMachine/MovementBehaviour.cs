@@ -21,6 +21,14 @@ namespace AgentStateMachine
         // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
         override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            if (_agent.State == States.panicking || _agent.State == States.explosion_victim)
+            {
+                if (_targetPos != _agent.DesiredExitPosition)
+                {
+                    _targetPos = _agent.DesiredExitPosition;
+                    _agent?.NavMeshAgent.SetDestination(_targetPos);
+                }
+            }
             if (Vector3.Distance(animator.transform.position, _targetPos) <= 1.25f)
             {
                 animator.SetTrigger("arrived");

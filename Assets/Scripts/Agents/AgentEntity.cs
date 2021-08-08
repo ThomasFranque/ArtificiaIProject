@@ -26,6 +26,7 @@ public class AgentEntity : MonoBehaviour
     public Animator StateMachine => _stateMachineAnim;
     public NavMeshAgent NavMeshAgent { get; private set; }
     public Vector3 DesiredPosition { get; private set; }
+    public Vector3 DesiredExitPosition { get; private set; }
     public Area CurrentArea { get; private set; }
 
     public void Initialize(int id, int othersAmount)
@@ -62,11 +63,23 @@ public class AgentEntity : MonoBehaviour
                 Kill();
                 break;
             case ExplosionRadiusType.middle:
-                NavMeshAgent.speed = NavMeshAgent.speed * 2;
+                State = States.explosion_victim;
                 break;
             case ExplosionRadiusType.outskirts:
+                if (State == States.explosion_victim) break;
+                State = States.panicking;
                 break;
         }
+
+        NotifyStateMachine();
+    }
+
+    public void ForceChangeState(States state)
+    {
+        if (state == State) return;
+        Debug.Log("NewState:" + state.ToString());
+        State = state;
+        NotifyStateMachine();
     }
 
     // priority = 50
@@ -79,14 +92,24 @@ public class AgentEntity : MonoBehaviour
         DesiredPosition = pos;
         Debug.DrawRay(pos + new Vector3(0, 2, 0), Vector3.down * 3, Color.red, 1f);
     }
+    public void SetDesiredExitPosition(Vector3 pos)
+    {
+        DesiredExitPosition = pos;
+        Debug.DrawRay(pos + new Vector3(0, 2, 0), Vector3.down * 3, Color.red, 1f);
+    }
     public void ResetAvoidancePriority()
     {
         NavMeshAgent.avoidancePriority = _othersAmount;
     }
 
-    private void Kill()
+    public void Kill()
     {
-        OnKill?.Invoke(ID);
+            OnKill?.Invoke(ID);
+        Destroy(gameObject);
+    }
+    public void ExitField()
+    {
+        OnExitField?.Invoke();
         Destroy(gameObject);
     }
 
@@ -129,6 +152,7 @@ public class AgentEntity : MonoBehaviour
                 break;
             case States.panicking:
             case States.explosion_victim:
+                StateMachine.SetTrigger("explosion");
                 break;
         }
 
@@ -203,6 +227,7 @@ public class AgentEntity : MonoBehaviour
     }
 
     public System.Action<int> OnKill; // int = ID
+    public System.Action OnExitField;
     private event Action<Area> OnAreaEntered;
     private event Action<Area> OnAreaLeft;
 

@@ -73,11 +73,11 @@ public class AgentBrain : MonoBehaviour
     {
         _killedAgents += amountKilled;
         Debug.Log(amountKilled + " Killed");
-        NavMesh.SetAreaCost(AgentEntity.OFFROAD_AREA_MASK, 0.8f);
+        NavMesh.SetAreaCost(AgentEntity.OFFROAD_AREA_MASK, 1f);
     }
     private void ExplosionWoreOff()
     {
-        NavMesh.SetAreaCost(AgentEntity.OFFROAD_AREA_MASK, 2f);
+        NavMesh.SetAreaCost(AgentEntity.OFFROAD_AREA_MASK, 3f);
     }
 
     // Give priority

@@ -16,7 +16,7 @@ public class EntireField : MonoBehaviour
 
     private Area[] _areas;
 
-    public Vector3 GetClosestExit(Vector3 from)
+    private Vector3 InstanceGetClosestExit(Vector3 from)
     {
         Vector3 closestPos = default;
         float closest = float.PositiveInfinity;
@@ -35,6 +35,8 @@ public class EntireField : MonoBehaviour
 
         return closestPos;
     }
+
+    public static Vector3 GetClosestExit(Vector3 from) => _instance.InstanceGetClosestExit(from);
 
     public Vector3 GetRandomEntrance()
     {

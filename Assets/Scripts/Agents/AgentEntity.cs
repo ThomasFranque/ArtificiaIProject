@@ -77,7 +77,6 @@ public class AgentEntity : MonoBehaviour
     public void ForceChangeState(States state)
     {
         if (state == State) return;
-        Debug.Log("NewState:" + state.ToString());
         State = state;
         NotifyStateMachine();
     }

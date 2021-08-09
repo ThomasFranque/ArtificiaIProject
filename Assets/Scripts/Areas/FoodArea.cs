@@ -30,7 +30,7 @@ public class FoodArea : Area
         return default;
     }
 
-    public override Vector3 GetPositionInArea(AgentEntity forE)
+    public override Vector3 GetPositionInArea(AgentEntity forE, float vr)
     {
         Transform chair = GetFreeChair();
         if (chair == default)

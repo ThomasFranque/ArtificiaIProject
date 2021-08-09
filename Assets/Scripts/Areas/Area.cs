@@ -7,7 +7,7 @@ public class Area : MonoBehaviour
     public AreaType Type { get; private set; }
 
     [SerializeField]
-    private Transform _ground;
+    protected Transform _ground;
     [SerializeField]
     private LayerMask _obstructionLayers;
     public Dictionary<Collider, AgentEntity> AgentsInArea { get; private set; }
@@ -64,7 +64,7 @@ public class Area : MonoBehaviour
         agent.LeftArea(this);
     }
 
-    public virtual Vector3 GetPositionInArea(AgentEntity forE)
+    public virtual Vector3 GetPositionInArea(AgentEntity forE, float positionValidateRadius = 0.7f)
     {
         float x;
         float z;
@@ -85,13 +85,13 @@ public class Area : MonoBehaviour
             i++;
             if (i == maxIterations)
                 pos = EntireField.GetRandomAreaOfType(Type, this).GetPositionInArea(forE);
-        } while (!ValidatePosition(pos));
+        } while (!ValidatePosition(pos, positionValidateRadius));
         return pos;
     }
 
-    protected bool ValidatePosition(Vector3 pos)
+    protected bool ValidatePosition(Vector3 pos, float radius)
     {
-        return !Physics.CheckSphere(pos, 0.7f, _obstructionLayers);
+        return !Physics.CheckSphere(pos, radius, _obstructionLayers);
     }
 
     private bool IsAgent(Collider other) => other.tag == AgentEntity.TAG;

@@ -6,10 +6,10 @@ using UnityEngine.AI;
 public class FireBehaviour : MonoBehaviour
 {
     [SerializeField] private Renderer _fireRenderer;
+    [SerializeField] private GameObject _fireOutskirts;
     [SerializeField] private NavMeshObstacle _navMeshObstacle;
     [SerializeField] private Animator _fireStatemachine;
     [SerializeField] private int _fireAftermathLayer;
-    [SerializeField] private string _agentTag;
     [SerializeField] private LayerMask _fireAndObstacles;
     [SerializeField] private Vector2 _minMaxLifetime;
     [SerializeField] private float aftermathDuration;
@@ -34,12 +34,20 @@ public class FireBehaviour : MonoBehaviour
 
     private IEnumerator CLifetime()
     {
+        yield return new WaitForSeconds(Random.Range(_minMaxLifetime.x, _minMaxLifetime.y));
+        Propagate();
+        PutOutFire();
+        yield return new WaitForSeconds(aftermathDuration);
+        Destroy(gameObject);
+    }
+
+    private void Propagate()
+    {
         Vector3 posRight = transform.position + Vector3.right * transform.parent.localScale.x;
         Vector3 posLeft = transform.position + Vector3.left * transform.parent.localScale.x;
         Vector3 posFront = transform.position + Vector3.forward * transform.parent.localScale.x;
         Vector3 posBack = transform.position + Vector3.back * transform.parent.localScale.x;
 
-        yield return new WaitForSeconds(Random.Range(_minMaxLifetime.x, _minMaxLifetime.y));
         if (spawnRight && IsFreeSpace(posRight))
             Instantiate(gameObject, posRight, Quaternion.identity, transform.parent);
         if (spawnLeft && IsFreeSpace(posLeft))
@@ -48,33 +56,19 @@ public class FireBehaviour : MonoBehaviour
             Instantiate(gameObject, posFront, Quaternion.identity, transform.parent);
         if (spawnBack && IsFreeSpace(posBack))
             Instantiate(gameObject, posBack, Quaternion.identity, transform.parent);
+    }
 
+    private void PutOutFire()
+    {
         _fireRenderer.enabled = false;
         _navMeshObstacle.enabled = false;
         _fireStatemachine.enabled = false;
+        _fireOutskirts.SetActive(false);
         gameObject.layer = _fireAftermathLayer;
-
-        yield return new WaitForSeconds(aftermathDuration);
-        Destroy(gameObject);
     }
 
     private bool IsFreeSpace(Vector3 pos)
     {
         return !Physics.CheckSphere(pos, transform.localScale.x * 0.45f, _fireAndObstacles);
-    }
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.collider.tag == _agentTag)
-            KillAgent(other.collider);
-    }
-    private void OnCollisionStay(Collision other)
-    {
-        if (other.collider.tag == _agentTag)
-            KillAgent(other.collider);
-    }
-    private void KillAgent(Collider c)
-    {
-        c.GetComponent<AgentEntity>().Kill();
     }
 }

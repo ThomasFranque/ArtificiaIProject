@@ -41,6 +41,8 @@ public class AgentEntity : MonoBehaviour
 
         SetAvoidancePriority(othersAmount);
         StartCoroutine(DelayBeforeMachineInitialization());
+
+        OnKill += CommonOnKill;
     }
 
     public void EnteredArea(Area area)
@@ -236,6 +238,7 @@ public class AgentEntity : MonoBehaviour
         StateMachine.enabled = true;
     }
 
+    public static System.Action<int> CommonOnKill; // int = ID
     public System.Action<int> OnKill; // int = ID
     public System.Action OnExitField;
     public System.Action OnGetUp;

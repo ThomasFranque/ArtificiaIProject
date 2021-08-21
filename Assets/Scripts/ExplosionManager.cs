@@ -30,11 +30,6 @@ public class ExplosionManager : MonoBehaviour
                 SpawnExplosionAt(hit.point);
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.S))
-            Time.timeScale = 6;
-        if (Input.GetKeyUp(KeyCode.S))
-            Time.timeScale = 1;
     }
 
     private void SpawnExplosionAt(Vector3 position)

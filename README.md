@@ -10,21 +10,39 @@ This project consists of a crowd simulation at an event. With explosions.
 
 Table of contents:
 
-- Finite State Machines
+- Finite State Machine and states
 - Pathfinding (with Unity's [Navmesh](https://docs.unity3d.com/ScriptReference/AI.NavMesh.html))
-- Static agent heuristic (static Brain)
-- Agent Panic and it's propagation
+- Static Agent Brain
+- Explosions / Agent Panic and it's propagation
 - Fire propagation
 
-## FSM
+- Explicação de como a simulação foi implementada, 2D/2.5D ou 3D, tipo de
+movimento dos agentes (cinemático ou dinâmico)
+- Explicação de como a simulação foi implementada, 2D/2.5D ou 3D, tipo de
+movimento dos agentes (cinemático ou dinâmico)
+- Explicação de como a simulação foi implementada, 2D/2.5D ou 3D, tipo de
+movimento dos agentes (cinemático ou dinâmico)
+- Explicação de como a simulação foi implementada, 2D/2.5D ou 3D, tipo de
+movimento dos agentes (cinemático ou dinâmico)
+- Explicação de como a simulação foi implementada, 2D/2.5D ou 3D, tipo de
+movimento dos agentes (cinemático ou dinâmico)
+
+## FSM and States
 
 Each agent is controlled by a Finite State Machine that "Loops around".
 For this technique, unity's animator system was used to achieve the desired result. More on that ahead.
-After each "Loop" it asks the brain what it should do next. 
+After each "Loop" it asks the brain what it should do next.
 
-### The Approach
+### FSM Approach
 
 As mentioned before, Unity's animators were used to create the agent's FSM.
+The animator acts as a High-level AI component, only doing what the agent needs to. Each agent is controlled by a static brain that defines what should be done next.
+
+// SCREENSHOT OF TREE PARAMETERS
+// SCREENSHOT OF TREE PARAMETERS
+// SCREENSHOT OF TREE PARAMETERS
+
+The individual agent will handle all necessary changes to its behaviour and notify the State Machine if and when it happens.
 
 ### Logic
 
@@ -36,8 +54,9 @@ Each agent has 3 High-level states:
 
 - Stay/Idle
 - Moving
+- Panic
 
-Since, in this simulation, all the agents do is move around and Using unity's [animator behaviour scrips](https://docs.unity3d.com/ScriptReference/StateMachineBehaviour.html), im able to have this high-level abstraction that allows me to be more flexible when implementing more behaviours to existing systems.
+Since, in this simulation, all the agents do is move around and, using unity's [animator behaviour scrips](https://docs.unity3d.com/ScriptReference/StateMachineBehaviour.html), im able to have this high-level abstraction that allows me to be more flexible when implementing more behaviours to existing systems.
 
 #### States
 
@@ -57,6 +76,8 @@ Controlling the Animator, we have a few more states to help differentiate what t
 Each of those states can be broken down into the two High-Level states.
 
 ##### Stay/Idle States
+
+Stay/Idle states are the states in which the AI is interacting with an area or in idle.
 
 ###### `watch_concert_positive` State
 
@@ -93,264 +114,126 @@ It will stop eating when full.
 
 ##### Moving States
 
-// I LEFT HERE, CONTINUE FROM HERE
+Moving states are the states in which the AI is on the move, from one place to another.
 
-#### Sequences
+###### `move_to_concert` State
 
-The sequences linearly call children after the completion of the previous.
+This state means the agent is moving to a concert.
+If coming from a concert, the AI will chose another concert that is not the one it is in.
 
-An action based system is used to determine when they should call the
-next children in line. The `OnComplete` action is called upon the completion of a
-component, that means, if a behaviour takes some time to finish, only when the
-`OnComplete` is called will it move to the next.
+_Note: As opposed to what was supposed to happen, the agents do **not** try to move as close as possible to the concert stage._
 
-The `OnComplete` is communicated to every called component and reset on the
-`Execute()` method. The only exception to this is on the sequences themselves,
-they do not pass their `OnComplete` to their called children, they instead give
-their own and keep the previous to themselves, allowing them to keep moving.
-When there are no more children to execute, they call the previous `OnComplete`,
-allowing for previous sequences to keep moving.
+    +  Bored
+    ++ Tired
+    +  Hunger
 
-#### Leafs
+###### `move_to_food` State
 
-The leafs approach was a little different than the usual.
+This state means the agent is moving to an eating area.
+When moving to an eating area, the AI will choose an empty chair to sit on and eat as its destination.
 
-Unity has `MonoBehaviours` that can be attached to _Game Objects_ and have all
-their info. And the _abstract_ leaf class `ModularBehaviour` extends from it. This
-allows for behaviours to be independent from the tree itself and use all of
-unity's features
-([`FixedUpdate`](https://docs.unity3d.com/ScriptReference/MonoBehaviour.FixedUpdate.html),
-[`LateUpdate`](https://docs.unity3d.com/ScriptReference/MonoBehaviour.LateUpdate.html),
-[`Update`](https://docs.unity3d.com/ScriptReference/MonoBehaviour.Update.html),
-[`Transform`](https://docs.unity3d.com/ScriptReference/Transform.html)
-and others)
+    +  Bored
+    ++ Tired
+    +  Hunger
 
-And when they finish executing, they call the `Complete()` method provided by
-the parent class.
+###### `move_to_open_space` State
 
-Example:
-Death Ray behaviour is called, the behaviour's OnExecute is called, allowing it
-to startup the ray and shoot, and when that is done, it calls the `Complete()`
-method that ends the leaf, disabling it if necessary to not affect performance.
+This state means the agent is moving to an open area.
+When moving to an open area, the AI will try to pick a space that has a minimum distance to other agents. When the area is too full, the AI will check which agents are further away from each other and sit in the middle of them.
 
-The leafs also need some general behaviours/info, like distances, follow or
-looking at. That is achieved by using separate components on the object that are
-referenced in the parent class `ModularBehaviour` and all subclasses are free
-to use them. They are all reset to defaults when a behaviour ends to prevent
-previous behaviours states to traverse.
+    +  Bored
+    ++ Tired
+    +  Hunger
 
-These general components are always required when a `ModularBehaviour` is added.
-To ensure that happens the
-[`[RequireComponent()]`](https://docs.unity3d.com/ScriptReference/RequireComponent.html)
-attribute is used, guaranteeing that, every time a `ModularBehaviour` is added
-that all the other general behaviours also get added.
+##### Panic States
 
-These are: `Follow` `ProximityChecker` and `SmoothLookAt`.
+Panic states are a mixture of both walk and idle states.
+A panic state can occur at any given time, overriding any other action the agent could be doing.
 
-### Enemy Tree Generation
+###### `panicking` state
+
+This state means the agent is panicking.
+The agent will look for the closest exit and run at twice the walking speed. Warning others on the way.
+
+    ++ Speed
+
+###### `explosion_victim` state
+
+This state means the agent was victim of an explosion and is crippled.
+Upon entering this state there is a 50/50 chance it will start bleeding. The agent will also not be able to move for `1 + Random.value * 3` seconds. Once the paralyze timer is over, the bleeding over starts, the bleeding will occur for `5 + Paralyze_Time + Random.value * 5` seconds
+If bleeding timer reaches 0, the agent dies.
+The agent will look for the closest exit and run at `Base_Speed + Random.value * 0.4 + 0.1` speed. Warning others on the way.
+
+    -- Speed
+    +  50/50 Death Timer
+
+## Pathfinding
+
+### Pathfinding Approach
+
+Unity's NavMesh system was used for Pathfinding. Unity also has a handy object avoidance behaviour for its Navmesh agents.
+
+Navmesh terrains have a value that indicates how hard it is to traverse. The higher the number, the harder it is to traverse. That way, I was able to make preferable paths for the agents to walk through.
+When chaos takes place, these numbers will all be set to one, so the agents can take whatever course they see fit to get to the exit as fast as possible.
+
+Navmesh Colliders are a great way to set up static obstacles with almost no effort. The obstacles will intersect the Navmesh and create holes that cannot be traversed.
+
+### Static Brain
+
+As previously mentioned, the agents refer to a Brain when the need to decide what to do next arises. This approach was chosen in hopes of aiding performance when dealing with many agent simulations.
+
+The Brain also handles creation and destruction of agents.
+
+The main feature of the brain is its Tick system. When an agent is created, it automatically subscribes to the `OnTick Action`.
+
+#### Ticks
+
+The ticks control the agent statistic changes (Hunger, Tiredness and Boredom).
+When a tick occurs, the agents will process what to decrease or increase based in its current state. For example, if an agent is eating, it will decrease hunger and tiredness, but increase boredom.
+
+For variety, upon creation, each agent is given a random value that increases or decreases the speed at which a stat changes, this makes it so an agent is more prone to get tired than others for example. This also applies for speed.
+
+The tick speed can be adjusted in the inspector. With a default of a 5 seconds interval.
+
+#### Heuristic
+
+The brain answers to its agent's calling, telling them what to do next. It follows the following rules:
+
+- Agent prioritizes resting, then food.
+- If both tiredness and hunger are above 90%, moves to eating zone.
+
+- While watching a concert, boredom will drop to 0% and then rise again to 50%.
+- When watching a concert and boredom is above 50%, move to some other concert.
+
+- If panicking, keep panicking.
 
 ![TreeUML](https://github.com/ThomasFranque/Modularia/blob/master/imgs/BehaviourTreeWGenUML.png)
 
-#### Enemy generation
-
-There are 3 types: Shooter, Brawler and Tank.
-
-Each enemy has a core that defines its base type and preset behaviours of that
-type.
-
-Then, 0 to 3 limbs are attached based on the game difficulty,
-that define additional behaviours as well as stat changes
-(but that doesn't matter here).
-
-#### Unity Flexibility
-
-By using custom inspectors, I was able to handpick which behaviours a part had
-for the generator to use.
-
-##### Composed behaviours
-
-Are sort of pre-made tree components
-
-Are a collection of "Raw Behaviours" (behaviours that are not composed) and
-composed behaviours. Reflection is used to get the raw behaviours.
-
-![ComposedInspector](https://github.com/ThomasFranque/Modularia/blob/master/imgs/ComposedExample.png)
-
-##### Modulariu Part Profile
-
-(Enemies are called Modularius)
-
-Are what behaviours can that part have. And other info.
-
-![PartInspector](https://github.com/ThomasFranque/Modularia/blob/master/imgs/PartExample.png)
-
-#### Generated Tree
-
-The tree works as follows:
-
->     [X] - Random Selector
->     [>] - Sequential Selector
->
->                          [>]Main Selector          --> Layer 0
->                           /            \
->                     [X]Attack          Idle        --> Layer 1
->                       Selector         Leaf
->                  /      |     \
->        [X]Shooter  [X]Brawler  [X]Tank             --> Layer 2
->           Selector    Selector    Selector
->              |          |         |
->             ...        ...       ...               --> Layer 3...
-
-All the behaviours and composed behaviours will be added to it's
-respective selector.
-
-If a core has all limbs of its type, it will be considered an elite
-and add the respective type special composed behaviour.
-
-The Layer 2 Selector weights will be determined by taking into
-account the core type and limbs, the core having an weight of 0.8
-while limbs have 0.2 (Do not mix weights with influences. Influences
-were supposed to be the stats influence on the core, having nothing
-to do with the tree).
-
-### Behaviour Tree References
-
-[Behaviour trees for AI - Chris Simpson](https://www.gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php)
-
-### What could have been done better
-
-A parent class for the three `ITreeComponents`
-
-A better `OnComplete` event handling
-
-## Procedural Level Generation
-
-![GenUML](https://github.com/ThomasFranque/Modularia/blob/master/imgs/LevelGenerationUML.png)
-
-The level generation is pretty straightforward.
-A main branch is generated and when that is over, sub-branches are generated
-from it. Lastly, room doors on branch intersections and same-branch door intersections open up.
-
-On the last room of the main branch, an exit is placed.
-
-The rooms are pre-made with a size of 30x30 units.
-
-Seeded generation is supported for same results every time.
-
-![Seed-7262020](https://github.com/ThomasFranque/Modularia/blob/master/imgs/Gen7262020.png "Generation With seed 7262020")
-
-![Seed-1234567](https://github.com/ThomasFranque/Modularia/blob/master/imgs/Gen1234567.png "Generation With seed 1234567")
-
-### Parameters
-
-There is a direction change parameter that determines whether the generator
-should go a different direction or not after a new room is created.
-
-There is a sub-branch chance. After the main branch is generated, for every room
-in it, it will roll for a sub-branch using that chance.
-
-### Generation References
-
-[Spelunky Generation - GMTK](https://www.youtube.com/watch?v=Uqk5Zf0tw3o)
-
-## A* Pathfinding
-
-![PathfindUML](https://github.com/ThomasFranque/Modularia/blob/master/imgs/PathfindingUML.png)
-
-Due to lack of time, this approach was the least homebrewed of the bunch, an
-implementation reference was taken from Sebastian Lague on Youtube on his A*
-Pathfinding series. Pre-made code was not taken from his given resource.
-Everything was written from scratch.
-
-Even though implementation was simplified I still needed to make it work with
-the procedural levels and make it adapt to dynamic surroundings.
-
-![PathfindExample](https://github.com/ThomasFranque/Modularia/blob/master/imgs/Pathfind.png)
-
-### Dynamic Surroundings
-
-For this, every time the algorithm tries to move to a certain tile, it performs a
-[`Physics.CheckBox()`](https://docs.unity3d.com/ScriptReference/Physics.CheckBox.html)
-provided from Unity that tells if anything is overlapping with that tile position.
-
-This allows for environment physics to take place and affect the AI.
-
-### Procedural Levels Link
-
-The initial idea was to have a big grid for the entire map, but time was running
-out and had to cut that idea.
-Instead, I made it so that every room is individual and doors close upon player
-entry, spawns some enemies and, when they are all dead, doors open up again.
-
-### A* Reference
-
-[A* Implementation - Sebastian Lague](https://www.youtube.com/watch?v=mZfyt03LDH4)
-
-[A Simple A* Path-Finding Example in C# - TwoCats Blog](https://web.archive.org/web/20170505034417/http://blog.two-cats.com/2014/06/a-star-example/)
-
 ## Known Issues (so far)
 
-### Behaviour Tree
+### FSM, Brain and States issues
 
-- On the enemy generated tree entering the idle behaviour will cause the tree
-to stop and not keep running (not sure if it is a behaviour problem or a tree problem).
-- The heal behaviour will sometimes trigger many times in a row (more often
-  on brawlers with tank limbs)
+- No known issues
 
-### Enemy Generation
+### Pathfinding issues
 
-- The only known issue is a huge game design flaw on chances that prevents
-the generation from being interesting.
+- When in panic mode and fire spreading, the agents will stop moving to recalculate the path.
+- Even if an agent is not in panic mode, if some other agent is, it will traverse the map as if it was running away, ignoring paths and going off-road.
 
-### Level Generation
+### Fire propagation / Explosions
 
-- No known issues.
+- Fire propagation might never stop.
+- Poor optimization and very basic level of complexity.
 
-### Pathfinding
+### Code issues
 
-- Enemies will get stuck on obstructed tiles if they happen to step on them
-- The game performance is awfully hit if the player stands in an obstructed
-tile due to long pathfinding searches (implementing an obstacle avoidance
-algorithm should fix that).
-- The enemy movement is not smooth and the path can be clearly seen
-
-### Code
-
-- The huge lack of and inconsistency on the documentation
+- Huge lack of documentation.
 
 ## Used Assets
 
-- [Volumetric 3D Lasers](https://assetstore.unity.com/packages/vfx/particles/spells/volumetric-3d-lasers-104580)
-
-- [Epic Toon FX](https://assetstore.unity.com/packages/vfx/particles/epic-toon-fx-57772)
-
-- [RPG Monster Duo](https://assetstore.unity.com/packages/3d/characters/creatures/rpg-monster-duo-pbr-polyart-157762)
-
-- [Lovely animals pack](https://assetstore.unity.com/packages/3d/characters/animals/lovely-animals-pack-92629#content)
+None
 
 ## General References
-
-[Fisher–Yates shuffle solution](https://stackoverflow.com/questions/273313/randomize-a-listt)
-
-[Wait one frame solution](https://forum.unity.com/threads/how-to-wait-for-a-frame-in-c.24616/)
-
-The pathfinding algorithm was discussed with André Vitorino a21902663.
-
-General feedback and suggestions from Rodrigo Pinheiro a21802488.
-
-## Dev Keys
-
-> R - Generate new level.
->
-> G - View generated map.
->
-> B - Check enemy behaviours overlay.
->
-> P - To pause.
-
-(I - To access enhancements)
-
-
 
 https://forum.unity.com/threads/navmeshagent-and-triggers-help-plz.127371/
 https://forum.unity.com/threads/how-to-define-movement-areas-for-each-character.447619/
@@ -359,3 +242,13 @@ https://answers.unity.com/questions/366157/mouse-click-to-world-space.html
 https://www.reddit.com/r/Unity3D/comments/9359us/how_would_you_make_navmesh_agents_avoid_each_other/
 https://docs.unity3d.com/Manual/nav-CreateNavMeshAgent.html
 https://stackoverflow.com/questions/141088/what-is-the-best-way-to-iterate-over-a-dictionary
+
+## Outside help
+
+Help structuring the state machine and its logic from Rodrigo Pinheiro.
+
+## Dev Keys
+
+> R - Reset.
+>
+> S - Speed up (hold)

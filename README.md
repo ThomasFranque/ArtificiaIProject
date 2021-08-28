@@ -4,7 +4,7 @@ By Tomás Franco, a21803301
 
 ## Overview
 
-![Overview](https://github.com/ThomasFranque/Modularia/blob/master/imgs/Overview.gif)
+![Overview]()
 
 This project consists of a crowd simulation at an event. With explosions.
 
@@ -16,10 +16,6 @@ Table of contents:
 - Explosions / Agent Panic and it's propagation
 - Fire propagation
 
-- Explicação de como a simulação foi implementada, 2D/2.5D ou 3D, tipo de
-movimento dos agentes (cinemático ou dinâmico)
-- Explicação de como a simulação foi implementada, 2D/2.5D ou 3D, tipo de
-movimento dos agentes (cinemático ou dinâmico)
 - Explicação de como a simulação foi implementada, 2D/2.5D ou 3D, tipo de
 movimento dos agentes (cinemático ou dinâmico)
 - Explicação de como a simulação foi implementada, 2D/2.5D ou 3D, tipo de
@@ -139,7 +135,7 @@ When moving to an eating area, the AI will choose an empty chair to sit on and e
 ###### `move_to_open_space` State
 
 This state means the agent is moving to an open area.
-When moving to an open area, the AI will try to pick a space that has a minimum distance to other agents. When the area is too full, the AI will check which agents are further away from each other and sit in the middle of them.
+When moving to an open area, the AI will try to pick a space that has a minimum X distance to other agents if possible. Every iteration that happens reduces the minimum amount of space required by a little bit. When the area is too full, the AI will check which agents are further away from each other and sit in the middle of them.
 
     +  Bored
     ++ Tired
@@ -171,6 +167,10 @@ The agent will look for the closest exit and run at `Base_Speed + Random.value *
 
 ### Pathfinding Approach
 
+// SHOW SCREENSHOT OF BAKED NAVMESH
+// SHOW SCREENSHOT OF BAKED NAVMESH
+// SHOW SCREENSHOT OF BAKED NAVMESH
+
 Unity's NavMesh system was used for Pathfinding. Unity also has a handy object avoidance behaviour for its Navmesh agents.
 
 Navmesh terrains have a value that indicates how hard it is to traverse. The higher the number, the harder it is to traverse. That way, I was able to make preferable paths for the agents to walk through.
@@ -201,13 +201,68 @@ The brain answers to its agent's calling, telling them what to do next. It follo
 
 - Agent prioritizes resting, then food.
 - If both tiredness and hunger are above 90%, moves to eating zone.
-
 - While watching a concert, boredom will drop to 0% and then rise again to 50%.
 - When watching a concert and boredom is above 50%, move to some other concert.
-
 - If panicking, keep panicking.
 
-![TreeUML](https://github.com/ThomasFranque/Modularia/blob/master/imgs/BehaviourTreeWGenUML.png)
+### Explosions / Agent Panic
+
+Explosions can be created on demand, when the user clicks anywhere on the map, an explosion will take place. Every agent that is within a certain radius will be affected in some way.
+
+// SHOW GIF OF EXPLOSION EXAMPLE
+// SHOW GIF OF EXPLOSION EXAMPLE
+// SHOW GIF OF EXPLOSION EXAMPLE
+
+#### Explosions approach
+
+The explosions are completely separate from the agent logic, at no given time are they expecting an explosion.
+
+The explosions themselves are completely customizable in the explosioneer inspector.
+When an explosion happens, the prefab of the explosion and its respective colliders will get scaled accordingly.
+
+// SHOW GIF OF CUSTOMIZABLE EXPLOSIONS
+// SHOW GIF OF CUSTOMIZABLE EXPLOSIONS
+// SHOW GIF OF CUSTOMIZABLE EXPLOSIONS
+
+There are three different outcomes if an agent is caught in an explosion:
+
+- Be caught on the outskirts, get scared and start panicking.
+- Get caught near the heart of the explosion and get crippled.
+- Be at the heart of the explosion and instantly die.
+
+// SHOW IMAGE OF EXPLOSION RADIUSES
+// SHOW IMAGE OF EXPLOSION RADIUSES
+// SHOW IMAGE OF EXPLOSION RADIUSES
+
+#### Panic Approach
+
+A Panic State can happen at any time to any agent from two possible sources, either be caught in one of the explosion radiuses or get warned by others panicking.
+
+##### Panic propagation
+
+The panic propagation approach is very flexible. It is an animator behaviour script that propagates any of the states.
+
+// SHOW SCREENSHOT OF STATE PROPAGATION INSPECTOR
+// SHOW SCREENSHOT OF STATE PROPAGATION INSPECTOR
+// SHOW SCREENSHOT OF STATE PROPAGATION INSPECTOR
+
+All it does is check if there is any agent within the given radius and propagates the given state, in this case, within 6.5 meters it propagates the state `Panicking`.
+
+This also happens on the fire.
+
+### Fire Propagation
+
+A fire occurs when an explosion takes place, an explosion spawns a default of five fires.
+
+#### Fire approach
+
+The fire AI is probably the less smart, complex and performant of the bunch. All it does is have a cooldown. When the cooldown ends, it will chose some of its sides and propagate more fire to those chosen sides if they are not obstructed, either by aftermath of a previous fire, an existing fire or obstacle.
+
+The fire lifetime consists of the deadly fire and the innocent aftermath, the aftermath creates an obstruction only for the fire that prevents it from moving there.
+
+// SHOW FIRE PROPAGATION SCREENSHOT
+// SHOW FIRE PROPAGATION SCREENSHOT
+// SHOW FIRE PROPAGATION SCREENSHOT
 
 ## Known Issues (so far)
 

@@ -286,7 +286,7 @@ The fire lifetime consists of the deadly fire and the innocent aftermath, the af
 
 ## Used Assets
 
-None
+Minecraft fire texture
 
 ## General References
 
@@ -301,6 +301,9 @@ https://stackoverflow.com/questions/141088/what-is-the-best-way-to-iterate-over-
 ## Outside help
 
 Help structuring the state machine and its logic from Rodrigo Pinheiro.
+
+Coding/logic references and Readme format help from my last year [AI Project Modularia](
+https://github.com/ThomasFranque/Modularia)
 
 ## Dev Keys
 

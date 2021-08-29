@@ -178,6 +178,8 @@ The main feature of the brain is its Tick system. When an agent is created, it a
 
 #### Ticks
 
+Taking inspiration from [minecraft's tick system](https://www.digminecraft.com/getting_started/game_tick.php), I decided this was a fitting approach to implement.
+
 The ticks control the agent statistic changes (Hunger, Tiredness and Boredom).
 When a tick occurs, the agents will process what to decrease or increase based in its current state. For example, if an agent is eating, it will decrease hunger and tiredness, but increase boredom.
 

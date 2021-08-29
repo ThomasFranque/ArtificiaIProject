@@ -16,13 +16,6 @@ Table of contents:
 - Explosions / Agent Panic and it's propagation
 - Fire propagation
 
-- Explicação de como a simulação foi implementada, 2D/2.5D ou 3D, tipo de
-movimento dos agentes (cinemático ou dinâmico)
-- Explicação de como a simulação foi implementada, 2D/2.5D ou 3D, tipo de
-movimento dos agentes (cinemático ou dinâmico)
-- Explicação de como a simulação foi implementada, 2D/2.5D ou 3D, tipo de
-movimento dos agentes (cinemático ou dinâmico)
-
 ## FSM and States
 
 Each agent is controlled by a Finite State Machine that "Loops around".
@@ -42,7 +35,6 @@ The individual agent will handle all necessary changes to its behaviour and noti
 
 ![Tree](https://github.com/ThomasFranque/ArtificiaIProject/blob/master/Images/AnimatorParameters.png.PNG)
 
-- - - - Meter Screenshot
 
 Each agent has 3 High-level states:
 
@@ -168,6 +160,8 @@ The agent will look for the closest exit and run at `Base_Speed + Random.value *
 ![Navmesh](https://github.com/ThomasFranque/ArtificiaIProject/blob/master/Images/NavemeshBake.PNG)
 
 Unity's NavMesh system was used for Pathfinding. Unity also has a handy object avoidance behaviour for its Navmesh agents.
+
+The agents have a cinematic movement type, since Navmesh agents do not support physics right out of the box.
 
 Navmesh terrains have a value that indicates how hard it is to traverse. The higher the number, the harder it is to traverse. That way, I was able to make preferable paths for the agents to walk through.
 When chaos takes place, these numbers will all be set to one, so the agents can take whatever course they see fit to get to the exit as fast as possible.
@@ -298,13 +292,19 @@ Minecraft fire texture
 
 ## General References
 
-https://forum.unity.com/threads/navmeshagent-and-triggers-help-plz.127371/
-https://forum.unity.com/threads/how-to-define-movement-areas-for-each-character.447619/
-https://docs.unity3d.com/Manual/nav-AreasAndCosts.html
-https://answers.unity.com/questions/366157/mouse-click-to-world-space.html
-https://www.reddit.com/r/Unity3D/comments/9359us/how_would_you_make_navmesh_agents_avoid_each_other/
-https://docs.unity3d.com/Manual/nav-CreateNavMeshAgent.html
-https://stackoverflow.com/questions/141088/what-is-the-best-way-to-iterate-over-a-dictionary
+[Navmesh and triggers](https://forum.unity.com/threads/navmeshagent-and-triggers-help-plz.127371/)
+
+[Movement areas for each character](https://forum.unity.com/threads/how-to-define-movement-areas-for-each-character.447619/)
+
+[Navmesh area costs](https://docs.unity3d.com/Manual/nav-AreasAndCosts.html)
+
+[Mouse click to world space](https://answers.unity.com/questions/366157/mouse-click-to-world-space.html)
+
+[Navmesh object avoidance](https://www.reddit.com/r/Unity3D/comments/9359us/how_would_you_make_navmesh_agents_avoid_each_other/)
+
+[Creating a navmesh agent](https://docs.unity3d.com/Manual/nav-CreateNavMeshAgent.html)
+
+[Best way to iterate through a dictionary](https://stackoverflow.com/questions/141088/what-is-the-best-way-to-iterate-over-a-dictionary)
 
 ## Outside help
 

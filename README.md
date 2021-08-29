@@ -318,10 +318,12 @@ Minecraft fire texture
 
 Help structuring the state machine and its logic from Rodrigo Pinheiro.
 
-![Brainstorm](https://user-images.githubusercontent.com/44176283/131252009-0b609a43-656f-4caa-b6d2-d6f8731f7047.png)
-
 Coding/logic references and Readme format help from my last year [AI Project Modularia](
 https://github.com/ThomasFranque/Modularia)
+
+Brainstorm with Rodrigo:
+
+![Brainstorm](https://user-images.githubusercontent.com/44176283/131252009-0b609a43-656f-4caa-b6d2-d6f8731f7047.png)
 
 ## Dev Keys
 

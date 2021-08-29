@@ -218,7 +218,7 @@ There are three different outcomes if an agent is caught in an explosion:
 - Get caught near the heart of the explosion and get crippled.
 - Be at the heart of the explosion and instantly die.
 
-![Explosion Radius](Explosion.PNG)
+![Explosion Radius](https://github.com/ThomasFranque/ArtificiaIProject/blob/master/Images/Explosion.PNG)
 
 #### Panic Approach
 

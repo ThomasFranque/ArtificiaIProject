@@ -34,15 +34,13 @@ After each "Loop" it asks the brain what it should do next.
 As mentioned before, Unity's animators were used to create the agent's FSM.
 The animator acts as a High-level AI component, only doing what the agent needs to. Each agent is controlled by a static brain that defines what should be done next.
 
-// SCREENSHOT OF TREE PARAMETERS
-// SCREENSHOT OF TREE PARAMETERS
-// SCREENSHOT OF TREE PARAMETERS
+![Tree parameters](https://github.com/ThomasFranque/ArtificiaIProject/blob/master/Images/AgentStateMachine.png)
 
 The individual agent will handle all necessary changes to its behaviour and notify the State Machine if and when it happens.
 
 ### Logic
 
-![BaseTreeUML](https://github.com/ThomasFranque/Modularia/blob/master/imgs/BehaviourTreeUML.png)
+![Tree](https://github.com/ThomasFranque/ArtificiaIProject/blob/master/Images/AnimatorParameters.png.PNG)
 
 - - - - Meter Screenshot
 
@@ -167,9 +165,7 @@ The agent will look for the closest exit and run at `Base_Speed + Random.value *
 
 ### Pathfinding Approach
 
-// SHOW SCREENSHOT OF BAKED NAVMESH
-// SHOW SCREENSHOT OF BAKED NAVMESH
-// SHOW SCREENSHOT OF BAKED NAVMESH
+![Navmesh](https://github.com/ThomasFranque/ArtificiaIProject/blob/master/Images/NavemeshBake.PNG)
 
 Unity's NavMesh system was used for Pathfinding. Unity also has a handy object avoidance behaviour for its Navmesh agents.
 
@@ -209,9 +205,7 @@ The brain answers to its agent's calling, telling them what to do next. It follo
 
 Explosions can be created on demand, when the user clicks anywhere on the map, an explosion will take place. Every agent that is within a certain radius will be affected in some way.
 
-// SHOW GIF OF EXPLOSION EXAMPLE
-// SHOW GIF OF EXPLOSION EXAMPLE
-// SHOW GIF OF EXPLOSION EXAMPLE
+![Explosion](https://github.com/ThomasFranque/ArtificiaIProject/blob/master/Images/ExplosionAndFire.gif)
 
 #### Explosions approach
 
@@ -220,9 +214,7 @@ The explosions are completely separate from the agent logic, at no given time ar
 The explosions themselves are completely customizable in the explosioneer inspector.
 When an explosion happens, the prefab of the explosion and its respective colliders will get scaled accordingly.
 
-// SHOW GIF OF CUSTOMIZABLE EXPLOSIONS
-// SHOW GIF OF CUSTOMIZABLE EXPLOSIONS
-// SHOW GIF OF CUSTOMIZABLE EXPLOSIONS
+![Explosioneer](https://github.com/ThomasFranque/ArtificiaIProject/blob/master/Images/ExplosionRadiusExample.gif)
 
 There are three different outcomes if an agent is caught in an explosion:
 
@@ -230,9 +222,7 @@ There are three different outcomes if an agent is caught in an explosion:
 - Get caught near the heart of the explosion and get crippled.
 - Be at the heart of the explosion and instantly die.
 
-// SHOW IMAGE OF EXPLOSION RADIUSES
-// SHOW IMAGE OF EXPLOSION RADIUSES
-// SHOW IMAGE OF EXPLOSION RADIUSES
+![Explosion Radius](Explosion.PNG.jpg)
 
 #### Panic Approach
 
@@ -242,9 +232,7 @@ A Panic State can happen at any time to any agent from two possible sources, eit
 
 The panic propagation approach is very flexible. It is an animator behaviour script that propagates any of the states.
 
-// SHOW SCREENSHOT OF STATE PROPAGATION INSPECTOR
-// SHOW SCREENSHOT OF STATE PROPAGATION INSPECTOR
-// SHOW SCREENSHOT OF STATE PROPAGATION INSPECTOR
+![State propagation](https://github.com/ThomasFranque/ArtificiaIProject/blob/master/Images/StatePropagationInspector.PNG)
 
 All it does is check if there is any agent within the given radius and propagates the given state, in this case, within 6.5 meters it propagates the state `Panicking`.
 
@@ -260,25 +248,45 @@ The fire AI is probably the less smart, complex and performant of the bunch. All
 
 The fire lifetime consists of the deadly fire and the innocent aftermath, the aftermath creates an obstruction only for the fire that prevents it from moving there.
 
-// SHOW FIRE PROPAGATION SCREENSHOT
-// SHOW FIRE PROPAGATION SCREENSHOT
-// SHOW FIRE PROPAGATION SCREENSHOT
+![Fire Propagation](https://github.com/ThomasFranque/ArtificiaIProject/blob/master/Images/FirePropagation.png)
+
+## Stress test, possible optimizations and final thoughts
+
+The simulation was able to just barely withstand 2000 agents at the same time.
+I believe that most of the performance issues come from text and mesh renderers, although, the pathfinding component is most definitely what is taking more resources of all AI components.
+
+A future iteration aimed at performance would be focused on the pathfinding and explosion behaviour, both from the fire and the agent parts.
+
+This project, although not complete with missing features, was built from the ground up with great interest and dedication.
+
+Some unity project walkthrough topics:
+
+- Everything that can be customizable, like entrances/exits, explosions, etc... is in the `Managers Object` at the root of the scene hierarchy.
+- The animator trees are beside the respective controller scripts.
+
+Missing features:
+
+- The concert area behaviour.
+- Agents do not have a Flee movement type, only Seek.
+- More complex panic behaviour (like sight).
+- More interesting fire.
+- Personal goal of a procedural level generation.
 
 ## Known Issues (so far)
 
 ### FSM, Brain and States issues
 
-- No known issues
+- The eating area, after looping through all empty spots, will get broken and agents will start to want to move to the same seats, causing them to be stuck.
 
 ### Pathfinding issues
 
 - When in panic mode and fire spreading, the agents will stop moving to recalculate the path.
 - Even if an agent is not in panic mode, if some other agent is, it will traverse the map as if it was running away, ignoring paths and going off-road.
 
-### Fire propagation / Explosions
+### Fire propagation / Explosion issues
 
 - Fire propagation might never stop.
-- Poor optimization and very basic level of complexity.
+- Poor optimization.
 
 ### Code issues
 

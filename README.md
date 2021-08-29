@@ -42,7 +42,7 @@ Each agent has 3 High-level states:
 - Moving
 - Panic
 
-Since, in this simulation, all the agents do is move around and, using unity's [animator behaviour scrips](https://docs.unity3d.com/ScriptReference/StateMachineBehaviour.html), im able to have this high-level abstraction that allows me to be more flexible when implementing more behaviours to existing systems.
+Since, in this simulation, all the agents do is move around and, using unity's [animator behaviour scripts](https://docs.unity3d.com/ScriptReference/StateMachineBehaviour.html), im able to have this high-level abstraction that allows me to be more flexible when implementing more behaviours to existing systems.
 
 #### States
 

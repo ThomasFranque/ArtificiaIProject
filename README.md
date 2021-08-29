@@ -178,7 +178,7 @@ The main feature of the brain is its Tick system. When an agent is created, it a
 
 #### Ticks
 
-Taking inspiration from [minecraft's tick system](https://www.digminecraft.com/getting_started/game_tick.php), I decided this was a fitting approach to implement.
+Taking inspiration from [minecraft's tick system](https://www.digminecraft.com/getting_started/game_tick.php), I decided this was a fitting approach to implement due to its performance benefits as opposed to updating the statistics every frame.
 
 The ticks control the agent statistic changes (Hunger, Tiredness and Boredom).
 When a tick occurs, the agents will process what to decrease or increase based in its current state. For example, if an agent is eating, it will decrease hunger and tiredness, but increase boredom.
@@ -218,7 +218,7 @@ There are three different outcomes if an agent is caught in an explosion:
 - Get caught near the heart of the explosion and get crippled.
 - Be at the heart of the explosion and instantly die.
 
-![Explosion Radius](Explosion.PNG.jpg)
+![Explosion Radius](Explosion.PNG)
 
 #### Panic Approach
 
@@ -248,10 +248,15 @@ The fire lifetime consists of the deadly fire and the innocent aftermath, the af
 
 ## Stress test, possible optimizations and final thoughts
 
-The simulation was able to just barely withstand 2000 agents at the same time.
+The simulation was able to just barely withstand 5000 agents at the same time.
 I believe that most of the performance issues come from text and mesh renderers, although, the pathfinding component is most definitely what is taking more resources of all AI components.
 
 A future iteration aimed at performance would be focused on the pathfinding and explosion behaviour, both from the fire and the agent parts.
+
+Stress test screenshots with statistics:
+
+![Normal Stress](https://github.com/ThomasFranque/ArtificiaIProject/blob/master/Images/StressTest5000.PNG)
+![Explosion Stress](https://github.com/ThomasFranque/ArtificiaIProject/blob/master/Images/ExplosionStresstest.PNG)
 
 This project, although not complete with missing features, was built from the ground up with great interest and dedication.
 

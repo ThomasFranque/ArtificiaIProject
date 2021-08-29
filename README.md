@@ -1,6 +1,7 @@
 # AI Project
 
 By Tomás Franco, a21803301
+[Project link](https://github.com/ThomasFranque/ArtificiaIProject)
 
 ## Overview
 
